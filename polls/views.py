@@ -1,15 +1,9 @@
 from django.shortcuts import render
-
 from django.http import HttpResponse
-
 from .models import Question, Choice
-
 from django.template import loader
-
 from django.http import HttpResponse, HttpResponseRedirect
-
 from django.shortcuts import get_object_or_404, render
-
 from django.urls import reverse
 
 
@@ -19,12 +13,12 @@ def index(request):
 def detail(request, question_id):
     return HttpResponse("You're looking at question %s." % question_id)
 
-def results(request, question_id):
+#def results(request, question_id):
     response = "You're looking at the results of question %s."
     return HttpResponse(response % question_id)
 
 def index(request):
-    latest_question_list = question.objects.order_by('-pub_date')[:5]
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
     template = loader.get_template('polls/index.html')
     context = {
         'latest_question_list': latest_question_list,
@@ -48,3 +42,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def results(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
